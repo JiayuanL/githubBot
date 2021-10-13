@@ -29,9 +29,9 @@ app.get("/", function(req, res) {
 app.post("/commit/", function(req, res) { 
 
     var fileName = "newFile.txt";
-    var fileContent = "hello world6";
+    var fileContent = "111hello world11122233333";
 
-    var repoDir = "C:/newRepo3";
+    var repoDir = "C:/testRepo";
 
     console.log('github API is called, files are commited');
     Git.Repository.open(repoDir)
@@ -46,28 +46,29 @@ app.post("/commit/", function(req, res) {
 app.post("/push/", function(req, res) { 
     var repoDir = "C:/newRepo3";
     console.log('github API is called, Push');
+
     Git.Repository.open(path.resolve(__dirname, repoDir))
     .then(function(repo) {
         repository = repo;
-        repository.getRemote("origin")
-        .then(function(remote) {
-            return remote.push(
-                ["refs/heads/master:refs/heads/master"],
-                {
-                    callbacks: {
-                        credentials: function(url, userName) {
-                            userName = "JiayuanL";
-                            console.log("url:" + url);
-                            console.log("userName:" + userName);
-                            return Git.Cred.sshKeyFromAgent(userName);
-                        }
-                    }
+        return repo.getRemote("origin"); //Get origin remote
+    })
+    .then(function(remote) {
+        return remote.push(["refs/heads/master:refs/heads/master"], {
+            callbacks: {
+                credentials: function(url, userName) {
+                    // console.log(userName);
+                    // console.log(url);
+                    console.log("Requesting creds");
+                    //return Git.Cred.sshKeyFromAgent(userName);
+                    //return Git.Cred.userpassPlaintextNew("jiayuanli1007@outlook.com", "Hello@1680!");
+                    return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
+                    //return Git.Cred.userpassPlaintextNew("JiayuanLLL", "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");
                 }
-            )
-            .catch(function(e) {
-                console.log(e);
-            });
+            }
         });
+    })
+    .catch(function(err) {
+        console.log("fail to push: " + err.message);
     })
    
     res.sendFile(__dirname + "/public/index.html");
