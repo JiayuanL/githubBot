@@ -15,7 +15,7 @@ var app = express();
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer(credentials, app);
 
-httpServer.listen(8080);
+httpServer.listen(8000);
 httpsServer.listen(8443);
 
 app.use(bodyParser.urlencoded({
@@ -28,10 +28,10 @@ app.get("/", function(req, res) {
   
 app.post("/commit/", function(req, res) { 
 
-    var fileName = "newFile.txt";
+    var fileName = "superMagicDoc.txt";
     var fileContent = "hello world6";
 
-    var repoDir = "C:/newRepo3";
+    var repoDir = "../test";
 
     console.log('github API is called, files are commited');
     Git.Repository.open(repoDir)
@@ -44,22 +44,32 @@ app.post("/commit/", function(req, res) {
 });
 
 app.post("/push/", function(req, res) { 
-    var repoDir = "C:/newRepo3";
+    var repoDir = "../test";
     console.log('github API is called, Push');
     Git.Repository.open(path.resolve(__dirname, repoDir))
     .then(function(repo) {
         repository = repo;
         repository.getRemote("origin")
         .then(function(remote) {
-            return remote.push(
-                ["refs/heads/master:refs/heads/master"],
+            return remote.push
+            // (
+            //     ['refs/heads/main:refs/heads/main'],
+            //     null,
+            //     repo.defaultSignature(),
+            //     'Push to master'
+            // )
+            (
+                ["refs/heads/main:refs/heads/main"],
                 {
                     callbacks: {
+                        certificateCheck: () => 1,
                         credentials: function(url, userName) {
-                            userName = "JiayuanL";
+                            userName = "ylu0826";
                             console.log("url:" + url);
                             console.log("userName:" + userName);
-                            return Git.Cred.sshKeyFromAgent(userName);
+                            // return Git.Cred.sshKeyFromAgent(userName);
+                            // return Git.Cred.sshKeyNew( userName, "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");
+                            return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
                         }
                     }
                 }
@@ -75,17 +85,17 @@ app.post("/push/", function(req, res) {
 
 app.post("/pull/", function(req, res) { 
 
-    var repoDir = "C:/newRepo3";
+    let repoDir = 'C:\\Users\\luyun\\source\\repos\\test';
     console.log('github API is called, Pull');
     var repository;
-    Git.Repository.open(path.resolve(__dirname, repoDir))
+    Git.Repository.open(path.resolve(repoDir))
     .then(function(repo) {
         repository = repo;
         return repository.fetch("origin", {
             callbacks: {
                 credentials: function(url, userName) {
+                    console.log("here"+userName);
                     return Git.Cred.sshKeyFromAgent(userName);
-                    //return Git.Credential.userpassPlaintextNew("jiayuanli1007@outlook.com", "Hello@1680!");
                 }/*,
                 certificateCheck: function() {
                     return 0;
@@ -97,7 +107,7 @@ app.post("/pull/", function(req, res) {
     // with the new one
     .then(function() {
         console.log("finished fetching");
-        return repository.mergeBranches("master", "origin/master");
+        return repository.mergeBranches("main", "origin/main");
     });
    
     res.sendFile(__dirname + "/public/index.html");
@@ -134,8 +144,10 @@ function commitFile(repo, fileName, fileContent, commitMessage) {
         .then(function(parentResult) {
             parent = parentResult;
             return Promise.all([
-                Git.Signature.create("Jiayuan Li", "jiayli@microsoft.com", 123456789, 60),
-                Git.Signature.create("Jiayuan Li", "jiayli@microsoft.com", 987654321, 90)
+                // Git.Signature.create("Jiayuan Li", "jiayli@microsoft.com", 123456789, 60),
+                // Git.Signature.create("Jiayuan Li", "jiayli@microsoft.com", 987654321, 90)
+                Git.Signature.create("Yun Lu", "ylu0826@foxmail.com", 123456789, 60),
+                Git.Signature.create("Yun Lu", "ylu0826@foxmail.com", 987654321, 90)
             ]);
         })
         .then(function(signatures) {
