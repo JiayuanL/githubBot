@@ -26,26 +26,27 @@ app.get("/", function(req, res) {
   res.sendFile(__dirname + "/public/index.html");
 });
   
+//var repoDir = "C:/testRepo";
+var repoDir = "C:/FHL2021Fall/VBProject1/Modules";
+var repoDir = "C:\\Users\\luyun\\source\\repos\\test";
+
 app.post("/commit/", function(req, res) { 
-
-    var fileName = "superMagicDoc.txt";
-    var fileContent = "hello world6";
-
-    var repoDir = "../test";
+    var fileName = "magicDoc2.txt";
+    // var fileName = "Module1.vb";
 
     console.log('github API is called, files are commited');
-    Git.Repository.open(repoDir)
+    Git.Repository.open(path.resolve(__dirname, repoDir))
     .then(function(repoResult) {
         repo = repoResult;
-        return commitFile(repo, fileName, fileContent, "commit this");
+        return commitFile(repo, fileName, "updated file: " + fileName);
     })
    
     res.sendFile(__dirname + "/public/index.html");
 });
 
 app.post("/push/", function(req, res) { 
-    var repoDir = "../test";
     console.log('github API is called, Push');
+
     Git.Repository.open(path.resolve(__dirname, repoDir))
     .then(function(repo) {
         repository = repo;
@@ -72,20 +73,17 @@ app.post("/push/", function(req, res) {
                             return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
                         }
                     }
-                }
-            )
-            .catch(function(e) {
-                console.log(e);
             });
-        });
+    })
+    .catch(function(err) {
+        console.log("fail to push: " + err.message);
     })
    
     res.sendFile(__dirname + "/public/index.html");
+    });
 });
 
 app.post("/pull/", function(req, res) { 
-
-    let repoDir = 'C:\\Users\\luyun\\source\\repos\\test';
     console.log('github API is called, Pull');
     var repository;
     Git.Repository.open(path.resolve(repoDir))
@@ -103,8 +101,6 @@ app.post("/pull/", function(req, res) {
             }
         });
     })
-    // Now that we're finished fetching, go ahead and merge our local branch
-    // with the new one
     .then(function() {
         console.log("finished fetching");
         return repository.mergeBranches("main", "origin/main");
@@ -114,14 +110,12 @@ app.post("/pull/", function(req, res) {
 });
 
 
-function commitFile(repo, fileName, fileContent, commitMessage) {
+function commitFile(repo, fileName, commitMessage) {
     var index;
     var treeOid;
     var parent;
-    return fse.writeFile(path.join(repo.workdir(), fileName), fileContent)
-        .then(function() {
-            return repo.refreshIndex();
-        })
+
+    return repo.refreshIndex()
         .then(function(indexResult) {
             index = indexResult;
         })
