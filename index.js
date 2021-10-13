@@ -26,25 +26,24 @@ app.get("/", function(req, res) {
   res.sendFile(__dirname + "/public/index.html");
 });
   
+//var repoDir = "C:/testRepo";
+var repoDir = "C:/FHL2021Fall/VBProject1/Modules";
+
 app.post("/commit/", function(req, res) { 
-
-    var fileName = "newFile.txt";
-    var fileContent = "111hello world11122233333";
-
-    var repoDir = "C:/testRepo";
+    //var fileName = "newFile.txt";
+    var fileName = "Module1.vb";
 
     console.log('github API is called, files are commited');
-    Git.Repository.open(repoDir)
+    Git.Repository.open(path.resolve(__dirname, repoDir))
     .then(function(repoResult) {
         repo = repoResult;
-        return commitFile(repo, fileName, fileContent, "commit this");
+        return commitFile(repo, fileName, "updated file: " + fileName);
     })
    
     res.sendFile(__dirname + "/public/index.html");
 });
 
 app.post("/push/", function(req, res) { 
-    var repoDir = "C:/newRepo3";
     console.log('github API is called, Push');
 
     Git.Repository.open(path.resolve(__dirname, repoDir))
@@ -61,8 +60,9 @@ app.post("/push/", function(req, res) {
                     console.log("Requesting creds");
                     //return Git.Cred.sshKeyFromAgent(userName);
                     //return Git.Cred.userpassPlaintextNew("jiayuanli1007@outlook.com", "Hello@1680!");
-                    return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
+                    //return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
                     //return Git.Cred.userpassPlaintextNew("JiayuanLLL", "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");
+                    return Git.Cred.userpassPlaintextNew("jiayuanli1007@outlook.com", "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");
                 }
             }
         });
@@ -75,8 +75,6 @@ app.post("/push/", function(req, res) {
 });
 
 app.post("/pull/", function(req, res) { 
-
-    var repoDir = "C:/newRepo3";
     console.log('github API is called, Pull');
     var repository;
     Git.Repository.open(path.resolve(__dirname, repoDir))
@@ -86,7 +84,6 @@ app.post("/pull/", function(req, res) {
             callbacks: {
                 credentials: function(url, userName) {
                     return Git.Cred.sshKeyFromAgent(userName);
-                    //return Git.Credential.userpassPlaintextNew("jiayuanli1007@outlook.com", "Hello@1680!");
                 }/*,
                 certificateCheck: function() {
                     return 0;
@@ -94,8 +91,6 @@ app.post("/pull/", function(req, res) {
             }
         });
     })
-    // Now that we're finished fetching, go ahead and merge our local branch
-    // with the new one
     .then(function() {
         console.log("finished fetching");
         return repository.mergeBranches("master", "origin/master");
@@ -105,14 +100,12 @@ app.post("/pull/", function(req, res) {
 });
 
 
-function commitFile(repo, fileName, fileContent, commitMessage) {
+function commitFile(repo, fileName, commitMessage) {
     var index;
     var treeOid;
     var parent;
-    return fse.writeFile(path.join(repo.workdir(), fileName), fileContent)
-        .then(function() {
-            return repo.refreshIndex();
-        })
+
+    return repo.refreshIndex()
         .then(function(indexResult) {
             index = indexResult;
         })
