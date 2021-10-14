@@ -27,11 +27,11 @@ app.get("/", function(req, res) {
 });
   
 //var repoDir = "C:/testRepo";
-var repoDir = "C:/FHL2021Fall/VBProject1/Modules";
-var repoDir = "C:\\Users\\luyun\\source\\repos\\test";
+// var repoDir = "C:/FHL2021Fall/VBProject1/Modules";
+var repoDir = "C:\\Users\\luyun\\source\\repos\\FHL2021Fall";
 
 app.post("/commit/", function(req, res) { 
-    var fileName = "magicDoc2.txt";
+    var fileName = "test2.txt";
     // var fileName = "Module1.vb";
 
     console.log('github API is called, files are commited');
@@ -53,12 +53,6 @@ app.post("/push/", function(req, res) {
         repository.getRemote("origin")
         .then(function(remote) {
             return remote.push
-            // (
-            //     ['refs/heads/main:refs/heads/main'],
-            //     null,
-            //     repo.defaultSignature(),
-            //     'Push to master'
-            // )
             (
                 ["refs/heads/main:refs/heads/main"],
                 {
@@ -70,7 +64,10 @@ app.post("/push/", function(req, res) {
                             console.log("userName:" + userName);
                             // return Git.Cred.sshKeyFromAgent(userName);
                             // return Git.Cred.sshKeyNew( userName, "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");
-                            return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
+                            // working one for test one:
+                            // return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
+                            
+                            return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
                         }
                     }
             });
