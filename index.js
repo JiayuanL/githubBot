@@ -63,7 +63,10 @@ app.get("/push/", function(req, res) {
                             console.log("userName:" + userName);
                             // return Git.Cred.sshKeyFromAgent(userName);
                             // return Git.Cred.sshKeyNew( userName, "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");
-                            return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
+                            // working one for test one:
+                            // return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
+                            
+                            return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
                         }
                     }
             });
