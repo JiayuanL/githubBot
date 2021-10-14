@@ -16,7 +16,7 @@ Office.onReady(function(){
 async function importVbaCode() {
     var context = new Excel.RequestContext();
     var vbaproject = context.workbook.vbaproject;
-    vbaproject.loadFromDisk("foo");
+    vbaproject.loadFromDisk("C:\\FHL2021Fall\\VBProject1");
     await context.sync();
     console.log("VBA code was successfully imported");
 }
