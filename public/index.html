@@ -3,26 +3,19 @@
   
 <head>
     <meta charset="utf-8">
-    <title>Calculator</title>
+    <title>Github</title>
+    <script src= "https://unpkg.com/@microsoft/office-js@1.1.72-custom.38/dist/excel.debug.js"></script>
+    <script src= "app.js"></script>
 </head>
   
 <body>
     <h1>GitHub</h1>
-    <form action="/commit/" method="post">            
-        <button type="submit" name="submit">
-            Commit
-        </button>
-    </form>
-    <form action="/push/" method="post">            
-        <button type="submit" name="submit">
-            Push
-        </button>
-    </form>
-    <form action="/pull/" method="post">            
-        <button type="submit" name="submit">
-            Pull
-        </button>
-    </form>
+    <button id="pullBtn" onclick="onPullButtonClicked()" disabled>Pull from remote repo</button>
+    <br/>
+    <button id="commitBtn" onclick="onCommitButtonClicked()" disabled>Commit to local repo</button>
+    <br/>
+    <button id="pushBtn" onclick="onPushButtonClicked()" disabled>Push to remote repo</button>
+    <br/>
 </body>
   
 </html>

@@ -3,7 +3,6 @@ var http = require('http');
 var https = require('https');
 var Git = require("nodegit");
 var path = require("path");
-var fse = require("fs-extra");
 var privateKey  = fs.readFileSync('sslcert/selfsigned.key', 'utf8');
 var certificate = fs.readFileSync('sslcert/selfsigned.crt', 'utf8');
 
@@ -15,7 +14,7 @@ var app = express();
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer(credentials, app);
 
-httpServer.listen(8000);
+httpServer.listen(8080);
 httpsServer.listen(8443);
 
 app.use(bodyParser.urlencoded({
@@ -25,14 +24,15 @@ app.use(bodyParser.urlencoded({
 app.get("/", function(req, res) {
   res.sendFile(__dirname + "/public/index.html");
 });
-  
-//var repoDir = "C:/testRepo";
-var repoDir = "C:/FHL2021Fall/VBProject1/Modules";
-var repoDir = "C:\\Users\\luyun\\source\\repos\\test";
 
-app.post("/commit/", function(req, res) { 
-    var fileName = "magicDoc2.txt";
-    // var fileName = "Module1.vb";
+app.get("/app.js", function(req, res) {
+    res.sendFile(__dirname + "/public/app.js");
+  });
+  
+var repoDir = "C:/FHL2021Fall/VBProject1/Modules";
+
+app.get("/commit/", function(req, res) { 
+    var fileName = "Module1.vb";
 
     console.log('github API is called, files are commited');
     Git.Repository.open(path.resolve(__dirname, repoDir))
@@ -44,21 +44,14 @@ app.post("/commit/", function(req, res) {
     res.sendFile(__dirname + "/public/index.html");
 });
 
-app.post("/push/", function(req, res) { 
+app.get("/push/", function(req, res) { 
     console.log('github API is called, Push');
-
     Git.Repository.open(path.resolve(__dirname, repoDir))
     .then(function(repo) {
         repository = repo;
         repository.getRemote("origin")
         .then(function(remote) {
             return remote.push
-            // (
-            //     ['refs/heads/main:refs/heads/main'],
-            //     null,
-            //     repo.defaultSignature(),
-            //     'Push to master'
-            // )
             (
                 ["refs/heads/main:refs/heads/main"],
                 {
@@ -78,21 +71,20 @@ app.post("/push/", function(req, res) {
     .catch(function(err) {
         console.log("fail to push: " + err.message);
     })
-   
+
     res.sendFile(__dirname + "/public/index.html");
-    });
+});
 });
 
-app.post("/pull/", function(req, res) { 
+app.get("/pull/", function(req, res) { 
     console.log('github API is called, Pull');
     var repository;
-    Git.Repository.open(path.resolve(repoDir))
+    Git.Repository.open(path.resolve(__dirname, repoDir))
     .then(function(repo) {
         repository = repo;
         return repository.fetch("origin", {
             callbacks: {
                 credentials: function(url, userName) {
-                    console.log("here"+userName);
                     return Git.Cred.sshKeyFromAgent(userName);
                 }/*,
                 certificateCheck: function() {
@@ -103,12 +95,27 @@ app.post("/pull/", function(req, res) {
     })
     .then(function() {
         console.log("finished fetching");
-        return repository.mergeBranches("main", "origin/main");
+        return repository.mergeBranches("master", "origin/master");
     });
    
     res.sendFile(__dirname + "/public/index.html");
 });
 
+app.get("/lastCommit/", function(req, res) {
+    var repository;
+    Git.Repository.open(path.resolve(__dirname, repoDir))
+    .then(function(repo) {
+        repository = repo;
+        return Git.Reference.nameToId(repo, "HEAD");
+    })
+    .then(function(head) {
+        return repository.getCommit(head);
+    })
+    .then(function(parentResult) {
+        var oid = parentResult.id().toString();
+        res.send(oid);
+    });
+});
 
 function commitFile(repo, fileName, commitMessage) {
     var index;
@@ -138,10 +145,8 @@ function commitFile(repo, fileName, commitMessage) {
         .then(function(parentResult) {
             parent = parentResult;
             return Promise.all([
-                // Git.Signature.create("Jiayuan Li", "jiayli@microsoft.com", 123456789, 60),
-                // Git.Signature.create("Jiayuan Li", "jiayli@microsoft.com", 987654321, 90)
-                Git.Signature.create("Yun Lu", "ylu0826@foxmail.com", 123456789, 60),
-                Git.Signature.create("Yun Lu", "ylu0826@foxmail.com", 987654321, 90)
+                Git.Signature.create("Jiayuan Li", "jiayli@microsoft.com", 123456789, 60),
+                Git.Signature.create("Jiayuan Li", "jiayli@microsoft.com", 987654321, 90)
             ]);
         })
         .then(function(signatures) {
@@ -156,16 +161,4 @@ function commitFile(repo, fileName, commitMessage) {
               treeOid,
               [parent]);
         });
-}
-
-function createRepository(repoPath, isBare){
-    // Create a new repository in a clean directory
-    return fse.remove(repoPath)
-    .then(function() {
-        return fse.ensureDir(repoPath);
-    })
-    .then(function() {
-        var bare = typeof isBare !== "undefined" ? isBare : 0;
-        return Git.Repository.init(repoPath, bare);
-    });
 }
