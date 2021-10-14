@@ -33,7 +33,7 @@ function onPullButtonClicked() {
             console.log("pull successfully");
             importVbaCode();
             // we get the returned data
-            document.getElementById("pullBtn").style.display = "none";
+            //document.getElementById("pullBtn").style.display = "none";
         }
 
         // end of state change: it can be after some time (async)
