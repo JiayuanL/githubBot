@@ -8,7 +8,7 @@ Office.onReady(function(){
     // When VBA code is saved, this action handler will get called on sdx side.
     Office.actions.associate('VBACodeSaved', function () {
     // enable "push" button
-        document.getElementById("commitBtn").disabled = false;
+        document.getElementById("commitBtn").style.display = "block";
     });
 });
 
@@ -33,7 +33,7 @@ function onPullButtonClicked() {
             console.log("pull successfully");
             importVbaCode();
             // we get the returned data
-            //document.getElementById("pullBtn").disabled = true;
+            document.getElementById("pullBtn").style.display = "none";
         }
 
         // end of state change: it can be after some time (async)
@@ -52,8 +52,8 @@ function onCommitButtonClicked() {
 
         if (this.status == 200) {
             console.log("commit successfully");
-            document.getElementById("commitBtn").disabled = true;
-            document.getElementById("pushBtn").disabled = false;
+            document.getElementById("commitBtn").style.display = "none";
+            document.getElementById("pushBtn").style.display = "block";
             //var data = JSON.parse(this.responseText);
             //importVbaCode();
             // we get the returned data
@@ -75,7 +75,7 @@ function onPushButtonClicked() {
 
         if (this.status == 200) {
             console.log("push successfully");
-            document.getElementById("pushBtn").disabled = true;
+            document.getElementById("pushBtn").style.display = "none";
             //var data = JSON.parse(this.responseText);
             //importVbaCode();
             // we get the returned data
@@ -102,7 +102,7 @@ function getLastCommit() {
             }
             else if (this.responseText != lastCommit)
             {
-                document.getElementById("pullBtn").disabled = false;
+                document.getElementById("pullBtn").style.display = "block";
                 lastCommit = currentCommit;
             }
         }

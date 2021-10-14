@@ -27,8 +27,12 @@ app.get("/", function(req, res) {
 
 app.get("/app.js", function(req, res) {
     res.sendFile(__dirname + "/public/app.js");
-  });
-  
+});
+
+app.get("/app.css", function(req, res) {
+    res.sendFile(__dirname + "/public/app.css");
+});
+
 var repoDir = "C:/FHL2021Fall";
 
 app.get("/commit/", function(req, res) { 

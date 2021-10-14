@@ -6,15 +6,17 @@
     <title>Github</title>
     <script src= "https://unpkg.com/@microsoft/office-js@1.1.72-custom.38/dist/excel.debug.js"></script>
     <script src= "app.js"></script>
+    <link rel="stylesheet" href="app.css">
 </head>
   
-<body>
-    <h1>GitHub</h1>
-    <button id="pullBtn" onclick="onPullButtonClicked()">Pull from remote repo</button>
+<body class="container">
+    <h1 class="title">SAVE HUMANS!</h1>
     <br/>
-    <button id="commitBtn" onclick="onCommitButtonClicked()" disabled>Commit to local repo</button>
+    <button id="pullBtn" onclick="onPullButtonClicked()" class="button1">Pull from remote repo</button>
     <br/>
-    <button id="pushBtn" onclick="onPushButtonClicked()" disabled>Push to remote repo</button>
+    <button id="commitBtn" onclick="onCommitButtonClicked()" class="button1" style="display: none;">Commit to local repo</button>
+    <br/>
+    <button id="pushBtn" onclick="onPushButtonClicked()" class="button1" style="display: none;">Push to remote repo</button>
     <br/>
 </body>
   
