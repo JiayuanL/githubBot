@@ -1,7 +1,7 @@
 var lastCommit = -1;
-setInterval(function(){
-    getLastCommit();
-}, 10 * 1000);
+// setInterval(function(){
+//     getLastCommit();
+// }, 10 * 1000);
 
 
 Office.onReady(function(){
@@ -31,10 +31,9 @@ function onPullButtonClicked() {
 
         if (this.status == 200) {
             console.log("pull successfully");
-            //var data = JSON.parse(this.responseText);
             importVbaCode();
             // we get the returned data
-            document.getElementById("pullBtn").disabled = true;
+            //document.getElementById("pullBtn").disabled = true;
         }
 
         // end of state change: it can be after some time (async)

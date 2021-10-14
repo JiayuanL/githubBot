@@ -29,16 +29,17 @@ app.get("/app.js", function(req, res) {
     res.sendFile(__dirname + "/public/app.js");
   });
   
-var repoDir = "C:/FHL2021Fall/VBProject1/Modules";
+var repoDir = "C:/FHL2021Fall";
 
 app.get("/commit/", function(req, res) { 
     var fileName = "Module1.vb";
+    var directoryName = "VBProject1/Modules";
 
     console.log('github API is called, files are commited');
     Git.Repository.open(path.resolve(__dirname, repoDir))
     .then(function(repoResult) {
         repo = repoResult;
-        return commitFile(repo, fileName, "updated file: " + fileName);
+        return commitFile(repo, fileName, "updated file: " + fileName, directoryName);
     })
    
     res.sendFile(__dirname + "/public/index.html");
@@ -63,10 +64,7 @@ app.get("/push/", function(req, res) {
                             console.log("userName:" + userName);
                             // return Git.Cred.sshKeyFromAgent(userName);
                             // return Git.Cred.sshKeyNew( userName, "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");
-                            // working one for test one:
-                            // return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
-                            
-                            return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
+                            return Git.Cred.userpassPlaintextNew("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", "x-oauth-basic");
                         }
                     }
             });
@@ -98,7 +96,7 @@ app.get("/pull/", function(req, res) {
     })
     .then(function() {
         console.log("finished fetching");
-        return repository.mergeBranches("master", "origin/master");
+        return repository.mergeBranches("main", "origin/main");
     });
    
     res.sendFile(__dirname + "/public/index.html");
@@ -109,7 +107,7 @@ app.get("/lastCommit/", function(req, res) {
     Git.Repository.open(path.resolve(__dirname, repoDir))
     .then(function(repo) {
         repository = repo;
-        return Git.Reference.nameToId(repo, "HEAD");
+        return Git.Reference.nameToId(repo, "refs/remotes/origin/main");
     })
     .then(function(head) {
         return repository.getCommit(head);
@@ -120,7 +118,7 @@ app.get("/lastCommit/", function(req, res) {
     });
 });
 
-function commitFile(repo, fileName, commitMessage) {
+function commitFile(repo, fileName, commitMessage, directoryName) {
     var index;
     var treeOid;
     var parent;
@@ -130,7 +128,7 @@ function commitFile(repo, fileName, commitMessage) {
             index = indexResult;
         })
         .then(function() {
-            return index.addByPath(fileName);
+            return index.addByPath(path.posix.join(directoryName, fileName));
         })
         .then(function() {
             return index.write();
