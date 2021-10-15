@@ -36,7 +36,7 @@ app.get("/app.css", function(req, res) {
 var repoDir = "C:/FHL2021Fall";
 
 app.get("/commit/", function(req, res) { 
-    var fileName = "Module1.vb";
+    var fileName = "Module1.txt";
     var directoryName = "VBProject1/Modules";
 
     console.log('github API is called, files are commited');
